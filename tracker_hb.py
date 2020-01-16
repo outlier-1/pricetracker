@@ -7,16 +7,20 @@ class HBTracker(Base):
     URL = 'https://www.hepsiburada.com'
     SEARCH_QUERY_BASE = 'https://www.hepsiburada.com/ara?q='
 
-    def get_price_from_link(self, link):
+    @staticmethod
+    def get_price_from_link(link):
         """ <span id='offering-id' content='PRICE' """
         soup = Base.get_soup(link)
         price_tag = soup.find(name='span', id='offering-price')
-        return price_tag['content']
+        formatted_price = "{:,.2f}".format(float(price_tag['content']))
+        return formatted_price
 
-    def construct_search_query(self, query):
-        clean_query = [self.SEARCH_QUERY_BASE]
+    @staticmethod
+    def construct_search_query(query):
+        clean_query = [HBTracker.SEARCH_QUERY_BASE]
+        valid_chars = ['-', '_', '*']
         for ch in query:
-            if ch.isalnum():
+            if ch.isalnum() or ch in valid_chars:
                 clean_query.append(ch)
             elif ch == ' ':
                 clean_query.append('+')
@@ -51,6 +55,3 @@ class HBTracker(Base):
                     value = info
                     property_dict[key] = value
         return property_dict
-
-
-x = HBTracker()
