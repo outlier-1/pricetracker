@@ -9,10 +9,14 @@ class Base(object):
         html = requests.get(link).content
         return BeautifulSoup(html, features='html.parser')
 
+    def construct_search_query(self, query):
+        pass
+
     def get_price_from_link(self, link):
         pass
 
     def search_product(self, *args, **kwargs):
         pass
     
-    pass
+    def extract_product_properties(self, link):
+        pass

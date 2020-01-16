@@ -1,7 +1,6 @@
 from basetracker import Base
-from bs4 import BeautifulSoup
-import codecs
 from utilities import char_to_hex
+
 
 class HBTracker(Base):
 
