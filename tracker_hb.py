@@ -7,36 +7,39 @@ class HBTracker(Base):
     URL = 'https://www.hepsiburada.com'
     SEARCH_QUERY_BASE = 'https://www.hepsiburada.com/ara?q='
 
-    def get_price_from_link(self, link):
+    @staticmethod
+    def get_price_from_link(link):
         """ <span id='offering-id' content='PRICE' """
         soup = Base.get_soup(link)
         price_tag = soup.find(name='span', id='offering-price')
         return price_tag['content']
 
-    def construct_search_query(self, query):
-        clean_query = [self.SEARCH_QUERY_BASE]
+    @staticmethod
+    def construct_search_query(query):
+        clean_query = [HBTracker.SEARCH_QUERY_BASE]
         for ch in query:
-            if ch.isalnum():
+            if ch.isalnum() or ch in ['-', ',', ';', '_']:
                 clean_query.append(ch)
             elif ch == ' ':
                 clean_query.append('+')
             else:
-                clean_query.append(char_to_hex(ch,prefix='%'))
+                clean_query.append(char_to_hex(ch, prefix='%'))
         return "".join(clean_query)
 
-    def search_product(self, query, *args, **kwargs):
+    @staticmethod
+    def search_product(query, *args, **kwargs):
         """ Returns the Result Links"""
-        search_query_link = self.construct_search_query(query)
+        search_query_link = HBTracker.construct_search_query(query)
         soup = Base.get_soup(search_query_link)
-        print(search_query_link)
         response_links = []
 
         # Search Multiple Classes
         for product_div in soup.findAll(recursive=True, attrs={'class': ['box', 'product']}, limit=5):
-            response_links.append(self.URL + product_div.a['href'])
-        print(response_links)
+            response_links.append(HBTracker.URL + product_div.a['href'])
+        return response_links
 
-    def extract_product_properties(self, product_link):
+    @staticmethod
+    def extract_product_properties(product_link):
         soup = Base.get_soup(product_link)
         property_dict = dict()
         key, value = None, None
@@ -52,5 +55,4 @@ class HBTracker(Base):
                     property_dict[key] = value
         return property_dict
 
-
-x = HBTracker()
+print(HBTracker.get_price_from_link("https://www.hepsiburada.com/rastar-r-c-1-18-ferrari-f138-uzaktan-kumandali-formula-1-arabasi-p-HBV000007OU4P?magaza=İnternet%20Oyuncak"))

@@ -1,13 +1,16 @@
 from basetracker import Base
+import time
 
 
 class AmazonTracker(Base):
 
-    def get_price_from_link(self, link):
-        """ <span id='offering-id' content='PRICE' """
+    @staticmethod
+    def get_price_from_link(link):
+        # TODO: SOLVE A PROBLEM, AMAZON WANTS TO SOLVE A CAPTCHA
         soup = Base.get_soup(link)
-        price_tag = soup.find(name='span', id='offering-price')
-        return price_tag['content']
+        price_tag = soup.find(name='span', id='price_inside_buybox')
+        print(soup.prettify())
+        return str(price_tag.string).strip()
 
     def construct_search_query(self, query):
         clean_query = [self.SEARCH_QUERY_BASE]
@@ -47,3 +50,6 @@ class AmazonTracker(Base):
                     value = info
                     property_dict[key] = value
         return property_dict
+
+
+print(AmazonTracker.get_price_from_link("https://www.amazon.com.tr/Samsung-970-500GB-NVMe-MZ-V7E500BW/dp/B07CGGP7SV/ref=sr_1_2?__mk_tr_TR=ÅMÅŽÕÑ&keywords=samsung+ssd&qid=1579389474&sr=8-2"))
